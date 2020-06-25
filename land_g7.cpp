@@ -1,48 +1,47 @@
-#include "Ô¤±àÒëÍ·.h"
-#include "½á¹¹Ìå.h"
+#include "é¢„ç¼–è¯‘å¤´.h"
+#include "ç»“æ„ä½“.h"
 #include "Form.h"
 #include "json_tool.h"
 #include "command.h"
 #include "land_g7.h"
-#include <functional>
-#include <queue>
+
 #pragma warning(disable : 4996)
 using namespace std;
 
-static std::map<string, bool> playerOpen;//Íæ¼ÒÊÇ·ñ´ò¿ªÁìµØÑ¡ÔñÄ£Ê½
-static std::map<std::string, Player*> onlinePlayers;//ÔÚÏßÁĞ±í
+static std::map<string, bool> playerOpen;//ç©å®¶æ˜¯å¦æ‰“å¼€é¢†åœ°é€‰æ‹©æ¨¡å¼
+static std::map<std::string, Player*> onlinePlayers;//åœ¨çº¿åˆ—è¡¨
 static std::map<string, string> playerName;
 static std::map<Player*, bool> player_isoline;
 
-static std::map<std::string,std::string> playerSetA;//Íæ¼ÒÊÇ·ñÉèÖÃÁËµãa
+static std::map<std::string,std::string> playerSetA;//ç©å®¶æ˜¯å¦è®¾ç½®äº†ç‚¹a
 static std::map<std::string,std::string> playerSetB;
 
 static std::map<unsigned, bool> fids;
-static std::map<std::string, UINT> gui_buyfid;//±íµ¥fid´¢´æ
+static std::map<std::string, UINT> gui_buyfid;//è¡¨å•fidå‚¨å­˜
 static std::map<std::string, UINT> gui_helpfid;
 static std::map<std::string, UINT> gui_sellfid;
 static std::map<std::string, UINT> gui_landsharefid;
 static std::map<std::string, UINT> gui_landpermissionfid;
 
-static std::map<std::string,std::string> gui_land_sharename;//·ÖÏíµÄÃû×Ö
+static std::map<std::string,std::string> gui_land_sharename;//åˆ†äº«çš„åå­—
 
 string LANDCONFIG;
 string LCONFIG;
 string PLAYERCONFIG;
 
-static std::map<int, bool> debug_useitem_open;//ÓÃÓÚÆäËûÍæ¼ÒÔÚÁìµØÖÜÎ§Ò»¸ñÄÚÎŞ·¨Ê¹ÓÃÎïÆ·
+static std::map<int, bool> debug_useitem_open;//ç”¨äºå…¶ä»–ç©å®¶åœ¨é¢†åœ°å‘¨å›´ä¸€æ ¼å†…æ— æ³•ä½¿ç”¨ç‰©å“
 
-//²å¼ş¼ÓÔØ
+//æ’ä»¶åŠ è½½
 void init() {
-	_mkdir("land");//´´½¨ÎÄ¼ş¼Ğ
+	_mkdir("land");//åˆ›å»ºæ–‡ä»¶å¤¹
     ifstream File;
-	cout << u8"ÁìµØ²å¼ş(land-g7.dll)ÒÑ¾­¼ÓÔØ¡£\n°æ±¾£º0.0.1-²âÊÔ°æ±¾¡£" << endl;
-	cout << u8"Ëü»òĞí½«²»ÔÙÓµÓĞÏÂÒ»¸ö°æ±¾¡£\n¿ÉÄÜ»áÓÀÔ¶»îÔÚÄãµÄĞÄÖĞ¡£" << endl;
-	cout << u8"±¾²å¼şÍêÈ«Ãâ·Ñ£¬½ûÖ¹½øĞĞÈÎºÎ´øÓĞÓ¯ÀûĞÔÖÊµÄ»î¶¯£¡" << endl;
+	cout << u8"é¢†åœ°æ’ä»¶(land-g7.dll)å·²ç»åŠ è½½ã€‚\nç‰ˆæœ¬ï¼š0.0.1-æµ‹è¯•ç‰ˆæœ¬ã€‚" << endl;
+	cout << u8"å®ƒæˆ–è®¸å°†ä¸å†æ‹¥æœ‰ä¸‹ä¸€ä¸ªç‰ˆæœ¬ã€‚\nå¯èƒ½ä¼šæ°¸è¿œæ´»åœ¨ä½ çš„å¿ƒä¸­ã€‚" << endl;
+	cout << u8"æœ¬æ’ä»¶å®Œå…¨å…è´¹ï¼Œç¦æ­¢è¿›è¡Œä»»ä½•å¸¦æœ‰ç›ˆåˆ©æ€§è´¨çš„æ´»åŠ¨ï¼" << endl;
 	File.open(".\\land\\config.json");
 	if (!File.is_open()) {
 		writeConfigJson();
-		cout << u8"´´½¨ÅäÖÃÎÄ¼ş: .\\land\\config.json" << endl;
+		cout << u8"åˆ›å»ºé…ç½®æ–‡ä»¶: .\\land\\config.json" << endl;
 	}
 	File.close();
 	File.open(".\\land\\land.json");
@@ -50,7 +49,7 @@ void init() {
 		ofstream a(".\\land\\land.json", std::ios::out);
 		a << "{}" ;
 		a.close();
-		cout << u8"´´½¨ÅäÖÃÎÄ¼ş: .\\land\\land.json" << endl;
+		cout << u8"åˆ›å»ºé…ç½®æ–‡ä»¶: .\\land\\land.json" << endl;
 	}
 	File.close();
 	File.open(".\\land\\player.json");
@@ -58,7 +57,7 @@ void init() {
 		ofstream a(".\\land\\player.json", std::ios::out);
 		a << "{}";
 		a.close();
-		cout << u8"´´½¨ÅäÖÃÎÄ¼ş: .\\land\\player.json" << endl;
+		cout << u8"åˆ›å»ºé…ç½®æ–‡ä»¶: .\\land\\player.json" << endl;
 	}
 	File.close();
 
@@ -66,19 +65,19 @@ void init() {
 	LANDCONFIG = getjson(".\\land\\land.json");
 	PLAYERCONFIG = getjson(".\\land\\player.json");
 }
-//²å¼şĞ¶ÔØ
+//æ’ä»¶å¸è½½
 void exit() {
-	std::cout << u8"ÁìµØ²å¼ş(land-g0.dll)ÒÑ¾­Ğ¶ÔØ¡£" << std::endl;
+	std::cout << u8"é¢†åœ°æ’ä»¶(land-g0.dll)å·²ç»å¸è½½ã€‚" << std::endl;
 }
 
-//===============Ğ´ÈëÅäÖÃÎÄ¼şÄ£¿é==================
+//===============å†™å…¥é…ç½®æ–‡ä»¶æ¨¡å—==================
 
-//Ğ´ÈëÖ÷ÅäÖÃÎÄ¼ş
+//å†™å…¥ä¸»é…ç½®æ–‡ä»¶
 void writeConfigJson()
 {
-	//¸ù½Úµã  
+	//æ ¹èŠ‚ç‚¹  
 	Json::Value config;
-	//¸ù½ÚµãÊôĞÔ  
+	//æ ¹èŠ‚ç‚¹å±æ€§  
 	config["money_buy"] = Json::Value(100);
 	config["money_sell"] = Json::Value(100);
 	config["max_land"] = Json::Value(5);
@@ -86,27 +85,27 @@ void writeConfigJson()
 	config["max_size"] = Json::Value(10000);
 	config["scoreboard"] = Json::Value("money");
 
-	//Ö±½ÓÊä³ö
+	//ç›´æ¥è¾“å‡º
 	//cout << "FastWriter:" << endl;
 	//Json::FastWriter fw;
 	//cout << fw.write(config) << endl << endl;
 
-	//Ëõ½øÊä³ö  
+	//ç¼©è¿›è¾“å‡º  
 	//cout << "StyledWriter:" << endl;
 	Json::StyledWriter sw1;
 	//cout << sw1.write(config) << endl << endl;
 
-	//Êä³öµ½ÎÄ¼ş  
+	//è¾“å‡ºåˆ°æ–‡ä»¶  
 	ofstream os;
 	os.open(".\\land\\config.json", std::ios::out);
 	if (!os.is_open())
-		cout << u8"[´íÎó]Ã»ÓĞÕÒµ½ÅäÖÃÎÄ¼ş£º \" config.json\"." << endl;
+		cout << u8"[é”™è¯¯]æ²¡æœ‰æ‰¾åˆ°é…ç½®æ–‡ä»¶ï¼š \" config.json\"." << endl;
 	os << sw1.write(config);
 	os.close();
 
 	LCONFIG = sw1.write(config);
 }
-//Ğ´ÈëÍæ¼ÒÊı¾İ
+//å†™å…¥ç©å®¶æ•°æ®
 void writePlayerJson(string uid,string land,string share_name,bool putblock, bool destroyblock, bool useitem, bool openchest, bool attack){
 	string content = PLAYERCONFIG;
 	Json::Value po;
@@ -215,17 +214,17 @@ void writePlayerJson(string uid,string land,string share_name,bool putblock, boo
 	Json::StyledWriter sw;
 	//cout << sw.write(po) << endl;
 
-	//Êä³öµ½ÎÄ¼ş  
+	//è¾“å‡ºåˆ°æ–‡ä»¶  
 	ofstream os;
 	os.open(".\\land\\player.json", std::ios::out);
 	if (!os.is_open())
-		cout << u8"[´íÎó]Ã»ÓĞÕÒµ½ÅäÖÃÎÄ¼ş:  player.json" << endl;
+		cout << u8"[é”™è¯¯]æ²¡æœ‰æ‰¾åˆ°é…ç½®æ–‡ä»¶:  player.json" << endl;
 	os << sw.write(po);
 	os.close();
 
 	PLAYERCONFIG = sw.write(po);
 }
-//ÒÆ³ıÍæ¼ÒÓµÓĞµÄÁìµØ
+//ç§»é™¤ç©å®¶æ‹¥æœ‰çš„é¢†åœ°
 void removePlayerJson_land_sharename(string uid, string land,string sharename) {
 	string content = PLAYERCONFIG;
 	if (content == "" || content == "{}") { return; };
@@ -332,17 +331,17 @@ void removePlayerJson_land_sharename(string uid, string land,string sharename) {
 	Json::StyledWriter sw;
 	//cout << sw.write(po) << endl;
 
-	//Êä³öµ½ÎÄ¼ş  
+	//è¾“å‡ºåˆ°æ–‡ä»¶  
 	ofstream os;
 	os.open(".\\land\\player.json", std::ios::out);
 	if (!os.is_open())
-		cout << u8"[´íÎó]Ã»ÓĞÕÒµ½ÅäÖÃÎÄ¼ş:  player.json" << endl;
+		cout << u8"[é”™è¯¯]æ²¡æœ‰æ‰¾åˆ°é…ç½®æ–‡ä»¶:  player.json" << endl;
 	os << sw.write(po);
 	os.close();
 
 	PLAYERCONFIG = sw.write(po);
 }
-//¼ÇÂ¼ÁìµØ
+//è®°å½•é¢†åœ°
 void writeLandJson(string uid, string point,string name)
 {
 	string content = LANDCONFIG;
@@ -363,12 +362,12 @@ void writeLandJson(string uid, string point,string name)
 	po["P_1_xb_zb"];
 
 	po["land"];
-	//×Ó½Úµã  
+	//å­èŠ‚ç‚¹  
 	Json::Value po1;
 	po1["land_use"] = Json::Value(name);
 	po1["xuid"] = Json::Value(uid);
 	
-	//×Ó½Úµã¹Òµ½¸ù½ÚµãÉÏ  
+	//å­èŠ‚ç‚¹æŒ‚åˆ°æ ¹èŠ‚ç‚¹ä¸Š  
 	po["land"][point] = Json::Value(po1);
 
 	auto aa = point.find(":");
@@ -388,47 +387,47 @@ void writeLandJson(string uid, string point,string name)
 
 	switch (ii)
 	{
-		//xºá×ø±ê£¬z×İ×ø±ê
+		//xæ¨ªåæ ‡ï¼Œzçºµåæ ‡
 	case P1111:
-		po["P_1_xa_za"].append(point);//µÚÒ»ÏóÏŞ
+		po["P_1_xa_za"].append(point);//ç¬¬ä¸€è±¡é™
 		break;
 	case P0101:
-		po["P_1_xb_za"].append(point);//µÚ¶şÏóÏŞ
+		po["P_1_xb_za"].append(point);//ç¬¬äºŒè±¡é™
 		break;
 	case P0000:
-		po["P_1_xb_zb"].append(point);//µÚÈıÏóÏŞ
+		po["P_1_xb_zb"].append(point);//ç¬¬ä¸‰è±¡é™
 		break;
 	case P1010:
-		po["P_1_xa_zb"].append(point);//µÚËÄÏóÏŞ
+		po["P_1_xa_zb"].append(point);//ç¬¬å››è±¡é™
 		break;
 
 	case P1110:
-		po["P_2_xa"].append(point);//µÚÒ»ËÄÏóÏŞ
+		po["P_2_xa"].append(point);//ç¬¬ä¸€å››è±¡é™
 		break;
 	case P1011:
 		po["P_2_xa"].append(point);
 		break;
 	case P1101:
-		po["P_2_za"].append(point);//Ò»¶şÏóÏŞ
+		po["P_2_za"].append(point);//ä¸€äºŒè±¡é™
 		break;
 	case P0111:
 		po["P_2_zb"].append(point);
 		break;
 	case P1000:
-		po["P_2_zb"].append(point);//ÈıËÄÏóÏŞ
+		po["P_2_zb"].append(point);//ä¸‰å››è±¡é™
 		break;
 	case P0010:
 		po["P_2_zb"].append(point);
 		break;
 	case P0100:
-		po["P_2_xb"].append(point);//¶şÈıÏóÏŞ
+		po["P_2_xb"].append(point);//äºŒä¸‰è±¡é™
 		break;
 	case P0001:
 		po["P_2_xb"].append(point);
 		break;
 
 	case P0110:
-		po["P_4"].append(point);//È«ÏóÏŞ
+		po["P_4"].append(point);//å…¨è±¡é™
 		break;
 	case P1100:
 		po["P_4"].append(point);
@@ -440,10 +439,10 @@ void writeLandJson(string uid, string point,string name)
 		po["P_4"].append(point);
 		break;
 	default:
-		cout << u8"[´íÎó]·ÖÀà´íÎó£¬³öÏÖ´Ë´íÎóÇëÁªÏµ×÷ÕßQQ: 654921949¡£" << endl;
+		cout << u8"[é”™è¯¯]åˆ†ç±»é”™è¯¯ï¼Œå‡ºç°æ­¤é”™è¯¯è¯·è”ç³»ä½œè€…QQ: 654921949ã€‚" << endl;
 		break;
 	}
-	//±£´æ¾ÉÖµ
+	//ä¿å­˜æ—§å€¼
 	Json::Reader reader;
 	Json::Value root;
 	if (reader.parse(content, root)) {
@@ -483,47 +482,47 @@ void writeLandJson(string uid, string point,string name)
 					
 					switch (ii)
 					{
-						//xºá×ø±ê£¬z×İ×ø±ê
+						//xæ¨ªåæ ‡ï¼Œzçºµåæ ‡
 					case P1111:
-						po["P_1_xa_za"].append(pot);//µÚÒ»ÏóÏŞ
+						po["P_1_xa_za"].append(pot);//ç¬¬ä¸€è±¡é™
 						break;
 					case P0101:
-						po["P_1_xb_za"].append(pot);//µÚ¶şÏóÏŞ
+						po["P_1_xb_za"].append(pot);//ç¬¬äºŒè±¡é™
 						break;
 					case P0000:
-						po["P_1_xb_zb"].append(pot);//µÚÈıÏóÏŞ
+						po["P_1_xb_zb"].append(pot);//ç¬¬ä¸‰è±¡é™
 						break;
 					case P1010:
-						po["P_1_xa_zb"].append(pot);//µÚËÄÏóÏŞ
+						po["P_1_xa_zb"].append(pot);//ç¬¬å››è±¡é™
 						break;
 
 					case P1110:
-						po["P_2_xa"].append(pot);//µÚÒ»ËÄÏóÏŞ
+						po["P_2_xa"].append(pot);//ç¬¬ä¸€å››è±¡é™
 						break;
 					case P1011:
 						po["P_2_xa"].append(pot);
 						break;
 					case P1101:
-						po["P_2_za"].append(pot);//Ò»¶şÏóÏŞ
+						po["P_2_za"].append(pot);//ä¸€äºŒè±¡é™
 						break;
 					case P0111:
 						po["P_2_zb"].append(pot);
 						break;
 					case P1000:
-						po["P_2_zb"].append(pot);//ÈıËÄÏóÏŞ
+						po["P_2_zb"].append(pot);//ä¸‰å››è±¡é™
 						break;
 					case P0010:
 						po["P_2_zb"].append(pot);
 						break;
 					case P0100:
-						po["P_2_xb"].append(pot);//¶şÈıÏóÏŞ
+						po["P_2_xb"].append(pot);//äºŒä¸‰è±¡é™
 						break;
 					case P0001:
 						po["P_2_xb"].append(pot);
 						break;
 
 					case P0110:
-						po["P_4"].append(pot);//È«ÏóÏŞ
+						po["P_4"].append(pot);//å…¨è±¡é™
 						break;
 					case P1100:
 						po["P_4"].append(pot);
@@ -535,7 +534,7 @@ void writeLandJson(string uid, string point,string name)
 						po["P_4"].append(pot);
 						break;
 					default:
-						cout << u8"[´íÎó]·ÖÀà´íÎó£¬³öÏÖ´Ë´íÎóÇëÁªÏµ×÷ÕßQQ: 654921949¡£" << endl;
+						cout << u8"[é”™è¯¯]åˆ†ç±»é”™è¯¯ï¼Œå‡ºç°æ­¤é”™è¯¯è¯·è”ç³»ä½œè€…QQ: 654921949ã€‚" << endl;
 						break;
 					}
 				}
@@ -546,28 +545,28 @@ void writeLandJson(string uid, string point,string name)
 		//return;
 	}
 
-	//Ö±½ÓÊä³ö  
+	//ç›´æ¥è¾“å‡º  
 	//cout << "FastWriter:" << endl;
 	//Json::FastWriter fw;
 	//cout << fw.write(root) << endl << endl;
 
 
-	//Ëõ½øÊä³ö  
+	//ç¼©è¿›è¾“å‡º  
 	//cout << "StyledWriter:" << endl;
 	Json::StyledWriter sw;
 	//cout << sw.write(po) << endl;
 
-	//Êä³öµ½ÎÄ¼ş  
+	//è¾“å‡ºåˆ°æ–‡ä»¶  
 	ofstream os;
 	os.open(".\\land\\land.json", std::ios::out);
 	if (!os.is_open())
-		cout << u8"[´íÎó]Ã»ÓĞÕÒµ½ÅäÖÃÎÄ¼ş:  land.json" << endl;
+		cout << u8"[é”™è¯¯]æ²¡æœ‰æ‰¾åˆ°é…ç½®æ–‡ä»¶:  land.json" << endl;
 	os << sw.write(po);
 	os.close();
 
 	LANDCONFIG = sw.write(po);
 }
-//ÒÆ³ıÁìµØ
+//ç§»é™¤é¢†åœ°
 void removeLandJson(string point) {
 	if (LANDCONFIG == "" || LANDCONFIG == "{}") { return; }
 	string content = LANDCONFIG;
@@ -635,47 +634,47 @@ void removeLandJson(string point) {
 
 					switch (ii)
 					{
-						//xºá×ø±ê£¬z×İ×ø±ê
+						//xæ¨ªåæ ‡ï¼Œzçºµåæ ‡
 					case P1111:
-						po["P_1_xa_za"].append(pot);//µÚÒ»ÏóÏŞ
+						po["P_1_xa_za"].append(pot);//ç¬¬ä¸€è±¡é™
 						break;
 					case P0101:
-						po["P_1_xb_za"].append(pot);//µÚ¶şÏóÏŞ
+						po["P_1_xb_za"].append(pot);//ç¬¬äºŒè±¡é™
 						break;
 					case P0000:
-						po["P_1_xb_zb"].append(pot);//µÚÈıÏóÏŞ
+						po["P_1_xb_zb"].append(pot);//ç¬¬ä¸‰è±¡é™
 						break;
 					case P1010:
-						po["P_1_xa_zb"].append(pot);//µÚËÄÏóÏŞ
+						po["P_1_xa_zb"].append(pot);//ç¬¬å››è±¡é™
 						break;
 
 					case P1110:
-						po["P_2_xa"].append(pot);//µÚÒ»ËÄÏóÏŞ
+						po["P_2_xa"].append(pot);//ç¬¬ä¸€å››è±¡é™
 						break;
 					case P1011:
 						po["P_2_xa"].append(pot);
 						break;
 					case P1101:
-						po["P_2_za"].append(pot);//Ò»¶şÏóÏŞ
+						po["P_2_za"].append(pot);//ä¸€äºŒè±¡é™
 						break;
 					case P0111:
 						po["P_2_zb"].append(pot);
 						break;
 					case P1000:
-						po["P_2_zb"].append(pot);//ÈıËÄÏóÏŞ
+						po["P_2_zb"].append(pot);//ä¸‰å››è±¡é™
 						break;
 					case P0010:
 						po["P_2_zb"].append(pot);
 						break;
 					case P0100:
-						po["P_2_xb"].append(pot);//¶şÈıÏóÏŞ
+						po["P_2_xb"].append(pot);//äºŒä¸‰è±¡é™
 						break;
 					case P0001:
 						po["P_2_xb"].append(pot);
 						break;
 
 					case P0110:
-						po["P_4"].append(pot);//È«ÏóÏŞ
+						po["P_4"].append(pot);//å…¨è±¡é™
 						break;
 					case P1100:
 						po["P_4"].append(pot);
@@ -687,7 +686,7 @@ void removeLandJson(string point) {
 						po["P_4"].append(pot);
 						break;
 					default:
-						cout << u8"[´íÎó]·ÖÀà´íÎó£¬³öÏÖ´Ë´íÎóÇëÁªÏµ×÷ÕßQQ: 654921949¡£" << endl;
+						cout << u8"[é”™è¯¯]åˆ†ç±»é”™è¯¯ï¼Œå‡ºç°æ­¤é”™è¯¯è¯·è”ç³»ä½œè€…QQ: 654921949ã€‚" << endl;
 						break;
 					}
 				}
@@ -703,20 +702,20 @@ void removeLandJson(string point) {
 	ofstream os;
 	os.open(".\\land\\land.json", std::ios::out);
 	if (!os.is_open())
-		cout << u8"[´íÎó]Ã»ÓĞÕÒµ½ÅäÖÃÎÄ¼ş:  land.json" << endl;
+		cout << u8"[é”™è¯¯]æ²¡æœ‰æ‰¾åˆ°é…ç½®æ–‡ä»¶:  land.json" << endl;
 	os << sw.write(po);
 	os.close();
 
 	LANDCONFIG = sw.write(po);
 };
 
-//==================»ñÈ¡ÅäÖÃÎÄ¼şĞÅÏ¢=================================
+//==================è·å–é…ç½®æ–‡ä»¶ä¿¡æ¯=================================
 
 string getjson(string name) {
 	ifstream in;
 	in.open(name);
 	std::string content((std::istreambuf_iterator<char>(in)), (std::istreambuf_iterator<char>()));
-	cout << u8"[ÁìµØ²å¼ş]¶ÁÈ¡ÅäÖÃÎÄ¼ş: "<<name<< endl;
+	cout << u8"[é¢†åœ°æ’ä»¶]è¯»å–é…ç½®æ–‡ä»¶: "<<name<< endl;
 	in.close();
 	if (content == "") { return "{}"; }
 	Json::Reader reader;
@@ -726,8 +725,8 @@ string getjson(string name) {
 		return content;
 	}
 	else {
-		cout << u8"[´íÎó]ÎŞ·¨ÕıÈ·¶ÁÈ¡ÅäÖÃÎÄ¼ş: " << name << endl;
-		cout << u8"\nÁìµØ²å¼ş½«ÎŞ·¨Õı³£Ê¹ÓÃ£¡" << endl;
+		cout << u8"[é”™è¯¯]æ— æ³•æ­£ç¡®è¯»å–é…ç½®æ–‡ä»¶: " << name << endl;
+		cout << u8"\né¢†åœ°æ’ä»¶å°†æ— æ³•æ­£å¸¸ä½¿ç”¨ï¼" << endl;
 		return "";
 	}
 	return content;
@@ -742,7 +741,7 @@ int get_maxsize() {
 		return maxsize;
 	}
 	else {
-		cout << u8"[´íÎó]ÎŞ·¨ÕıÈ·¶ÁÈ¡ÅäÖÃÎÄ¼ş: .\\land\\config.json\n" << endl;
+		cout << u8"[é”™è¯¯]æ— æ³•æ­£ç¡®è¯»å–é…ç½®æ–‡ä»¶: .\\land\\config.json\n" << endl;
 	}
 	return 0;
 }
@@ -756,7 +755,7 @@ int get_maxland() {
 		return maxland;
 	}
 	else {
-		cout << u8"[´íÎó]ÎŞ·¨ÕıÈ·¶ÁÈ¡ÅäÖÃÎÄ¼ş: .\\land\\config.json\n" << endl;
+		cout << u8"[é”™è¯¯]æ— æ³•æ­£ç¡®è¯»å–é…ç½®æ–‡ä»¶: .\\land\\config.json\n" << endl;
 	}
 	return 0;
 }
@@ -770,7 +769,7 @@ string get_setmoney() {
 		return scoreboard;
 	}
 	else {
-		cout << u8"[´íÎó]ÎŞ·¨ÕıÈ·¶ÁÈ¡ÅäÖÃÎÄ¼ş: .\\land\\config.json\n" << endl;
+		cout << u8"[é”™è¯¯]æ— æ³•æ­£ç¡®è¯»å–é…ç½®æ–‡ä»¶: .\\land\\config.json\n" << endl;
 	}
 	return "money";
 }
@@ -790,11 +789,11 @@ int get_landmoney(bool a){
 		return landmoney;
 	}
 	else {
-		cout << u8"[´íÎó]ÎŞ·¨ÕıÈ·¶ÁÈ¡ÅäÖÃÎÄ¼ş: .\\land\\config.json\n" << endl;
+		cout << u8"[é”™è¯¯]æ— æ³•æ­£ç¡®è¯»å–é…ç½®æ–‡ä»¶: .\\land\\config.json\n" << endl;
 	}
 	return 0;
 }
-//»ñÈ¡ÁìµØµÄÍæ¼ÒĞÅÏ¢
+//è·å–é¢†åœ°çš„ç©å®¶ä¿¡æ¯
 string get_land_json(string point, string name) {
 	string content = LANDCONFIG;
 
@@ -804,7 +803,7 @@ string get_land_json(string point, string name) {
 		return root["land"][point][name].asString();
 	}
 	else {
-		//cout << u8"[´íÎó]ÎŞ·¨ÕıÈ·¶ÁÈ¡ÅäÖÃÎÄ¼ş: land.json\n" << endl;
+		//cout << u8"[é”™è¯¯]æ— æ³•æ­£ç¡®è¯»å–é…ç½®æ–‡ä»¶: land.json\n" << endl;
 	}
 	return "0";
 };
@@ -842,9 +841,9 @@ void get_player_json(string uid, bool* putblock, bool* destroyblock, bool* useit
 	return;
 };
 
-//==============ÁìµØ£¨Ö÷Ä£¿é£©============================================
+//==============é¢†åœ°ï¼ˆä¸»æ¨¡å—ï¼‰============================================
 
-//ÅĞ¶Ïµã»÷µØÃæµÄÎïÆ·id
+//åˆ¤æ–­ç‚¹å‡»åœ°é¢çš„ç‰©å“id
 bool isitemid(int id, int id2) {
 	string content = LCONFIG;
 	Json::Reader reader;
@@ -859,11 +858,11 @@ bool isitemid(int id, int id2) {
 		}
 	}
 	else {
-		cout << u8"[´íÎó]ÎŞ·¨ÕıÈ·¶ÁÈ¡ÅäÖÃÎÄ¼ş: config.json\n" << endl;
+		cout << u8"[é”™è¯¯]æ— æ³•æ­£ç¡®è¯»å–é…ç½®æ–‡ä»¶: config.json\n" << endl;
 	}
 	return false;
 }
-//Î»ÖÃÅĞ¶Ï£¨¼òµ¥ÓÅ»¯£¬¼õÉÙÑ­»·´ÎÊı£©
+//ä½ç½®åˆ¤æ–­ï¼ˆç®€å•ä¼˜åŒ–ï¼Œå‡å°‘å¾ªç¯æ¬¡æ•°ï¼‰
 string island(int x, int y, int z) {
 	if (LANDCONFIG == "" || LANDCONFIG == "{}") { return "0"; }
 	string po;
@@ -920,7 +919,7 @@ string island(int x, int y, int z) {
 	}
 	return "0";
 }
-//Ö´ĞĞÓÅ»¯
+//æ‰§è¡Œä¼˜åŒ–
 whicthType use_what_byxz(int x1, int z1, int x2, int z2) {
 	if (x1 >= 0 && z1 >= 0 && x2 >= 0 && z2 >= 0) {
 		return P1111;
@@ -1001,7 +1000,7 @@ string island_circle(string point,int x,int y,int z) {
 				int y2 = std::stoi(a3.substr(b3 + 1, b4 - b3 - 1));
 				int z2 = std::stoi(a3.substr(b4 + 1));
 
-				//ÁìµØÖÜÎ§Ò»È¦ÎŞ·¨Ê¹ÓÃÎïÆ·
+				//é¢†åœ°å‘¨å›´ä¸€åœˆæ— æ³•ä½¿ç”¨ç‰©å“
 				if (debug_useitem_open[x+y+z]) {
 					if( x1 >= 0 ){
 						x1 = x1+ 1;
@@ -1040,7 +1039,7 @@ string island_circle(string point,int x,int y,int z) {
 	}
 	return "0";
 }
-//È¦µØÅĞ¶Ï
+//åœˆåœ°åˆ¤æ–­
 string checkland(int xa, int ya, int za, int xb, int yb, int zb) {
 	string content = LANDCONFIG;
 	Json::Reader reader;
@@ -1084,7 +1083,7 @@ string checkland(int xa, int ya, int za, int xb, int yb, int zb) {
 	}
 	return "0";
 }
-//ÅĞ¶ÏÒ»¸öµãÊÇ·ñÔÚÒ»¸öÇøÓòÄÚ
+//åˆ¤æ–­ä¸€ä¸ªç‚¹æ˜¯å¦åœ¨ä¸€ä¸ªåŒºåŸŸå†…
 bool land_is(int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2) {
 	if (x1 < x2) {
 		if (x >= x1 && x <= x2) {
@@ -1116,7 +1115,7 @@ bool land_is(int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2
 	}
 	return false;
 }
-//ÊÇ·ñÓµÓĞÁìµØµÄÈ¨ÏŞ
+//æ˜¯å¦æ‹¥æœ‰é¢†åœ°çš„æƒé™
 bool island_player(string xuid,string name,string point/*x.y.z*/, landType id) {
 	auto b1 = point.find(".");
 	auto b2 = point.rfind(".");
@@ -1127,7 +1126,7 @@ bool island_player(string xuid,string name,string point/*x.y.z*/, landType id) {
 		debug_useitem_open[x+y+z] = true;
 	}
 	//cout << "ll" << endl;
-	//ÊÇ·ñÊÇÁìµØ
+	//æ˜¯å¦æ˜¯é¢†åœ°
 	string landis = island(x, y, z);
 	if (debug_useitem_open[x+y+z]) {
 		debug_useitem_open[x+y+z] = false;
@@ -1136,7 +1135,7 @@ bool island_player(string xuid,string name,string point/*x.y.z*/, landType id) {
 	if (landis == "0") {
 		return true;
 	}
-	//ÊÇ·ñÊÇÁìµØÖ÷ÈË
+	//æ˜¯å¦æ˜¯é¢†åœ°ä¸»äºº
 	string landop = get_land_json(landis,"xuid");
 	if (landop == xuid){
 		return true;
@@ -1185,7 +1184,7 @@ bool island_player(string xuid,string name,string point/*x.y.z*/, landType id) {
 	}
 	return false;
 }
-//ÁìµØ¹ºÂò
+//é¢†åœ°è´­ä¹°
 bool land_buy(string uid, int* s, int* money) {
 	string poa = playerSetA[uid];
 	string pob = playerSetB[uid];
@@ -1214,7 +1213,7 @@ bool land_buy(string uid, int* s, int* money) {
 	int b = *money;
 	string land_who = checkland(x1, y1, z1, x2, y2, z2);
 	if (land_who != "0") {
-		string str = u8"¡ìcÁìµØÖØµş£¬ÎŞ·¨¹ºÂò¸ÃÁìµØ¡£\n¡ìeÖØµşÁìµØ×ø±ê: ";
+		string str = u8"Â§cé¢†åœ°é‡å ï¼Œæ— æ³•è´­ä¹°è¯¥é¢†åœ°ã€‚\nÂ§eé‡å é¢†åœ°åæ ‡: ";
 		str.append(land_who);
 		sendText(uid, str, RAW);
 		return false;
@@ -1224,14 +1223,14 @@ bool land_buy(string uid, int* s, int* money) {
 	//cout << maxsize << endl;
 	if (a > maxsize) {
 		char str[256];
-		sprintf_s(str, u8"¡ìc¹ºÂòÊ§°Ü£¬ÁìµØ³ß´ç³¬¹ı×î´óÏŞÖÆ: %d",maxsize);
+		sprintf_s(str, u8"Â§cè´­ä¹°å¤±è´¥ï¼Œé¢†åœ°å°ºå¯¸è¶…è¿‡æœ€å¤§é™åˆ¶: %d",maxsize);
 		sendText(uid, str, RAW);
 		return false;
 	}
 	int maxlandnum = get_maxland();
 	if (get_player_land_num(uid) >= maxlandnum) {
 		char str[256];
-		sprintf_s(str, u8"¡ìc¹ºÂòÊ§°Ü£¬ÁìµØÊıÁ¿³¬¹ı×î´óÏŞÖÆ: %d",maxlandnum);
+		sprintf_s(str, u8"Â§cè´­ä¹°å¤±è´¥ï¼Œé¢†åœ°æ•°é‡è¶…è¿‡æœ€å¤§é™åˆ¶: %d",maxlandnum);
 		sendText(uid, str, RAW);
 		return false;
 	}
@@ -1239,13 +1238,13 @@ bool land_buy(string uid, int* s, int* money) {
 		return true;
 	}
 	else {
-		sendText(uid, u8"¡ìcÓà¶î²»×ã£¬¹ºÂòÊ§°Ü¡£", RAW);
+		sendText(uid, u8"Â§cä½™é¢ä¸è¶³ï¼Œè´­ä¹°å¤±è´¥ã€‚", RAW);
 		return false;
 	}
 
 	return false;
 }
-//ÁìµØ³öÊÛ
+//é¢†åœ°å‡ºå”®
 bool land_sell(string uid,string point,int* money,string* landpot){
 	auto b1 = point.find(".");
 	auto b2 = point.rfind(".");
@@ -1256,12 +1255,12 @@ bool land_sell(string uid,string point,int* money,string* landpot){
 	string landpo = island(x,y,z);
 	*landpot = landpo;
 	if (landpo == "0") {
-		sendText(uid,u8"¡ìcÄãµÄ½ÅÏÂÃ»ÓĞÁìµØ£¡",RAW);
+		sendText(uid,u8"Â§cä½ çš„è„šä¸‹æ²¡æœ‰é¢†åœ°ï¼",RAW);
 		return false;
 	}
 	string land_who = get_land_json(landpo, "xuid");
 	if (uid != land_who) {
-		sendText(uid, u8"¡ìcÕâ¸öÁìµØ²»ÊôÓÚÄã£¡", RAW);
+		sendText(uid, u8"Â§cè¿™ä¸ªé¢†åœ°ä¸å±äºä½ ï¼", RAW);
 		return false;
 	}
 	else {
@@ -1290,16 +1289,16 @@ bool land_sell(string uid,string point,int* money,string* landpot){
 	return false;
 }
 
-//=========MC½Å±¾=========
+//=========MCè„šæœ¬=========
 
 static VA p_spscqueue;
-// Ö´ĞĞºó¶ËÖ¸Áî
+// æ‰§è¡Œåç«¯æŒ‡ä»¤
 static bool runcmd(std::string cmd) {
 	if (p_spscqueue != 0)
 		return SYMCALL(bool, MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e, p_spscqueue, cmd);
 	return false;
 }
-//¸øÍæ¼Ò·¢ËÍÎÄ±¾ĞÅÏ¢
+//ç»™ç©å®¶å‘é€æ–‡æœ¬ä¿¡æ¯
 void sendText(string xuid, string text, TextType tp) {
 	Player* p = onlinePlayers[xuid];
 	string name = p->getNameTag();
@@ -1307,14 +1306,14 @@ void sendText(string xuid, string text, TextType tp) {
 
 }
 
-//=============¼Æ·Ö°å¾­¼ÃÄ£¿é=============
+//=============è®¡åˆ†æ¿ç»æµæ¨¡å—=============
 Scoreboard* landmoney_scoreboard;
 int getmoney(string xuid) {
 	Player* p = onlinePlayers[xuid];
 	string objname = get_setmoney();
 	auto testobj = landmoney_scoreboard->getobject(&objname);
 	if (!testobj) {
-		cout << u8"Ã»ÓĞÕÒµ½¶ÔÓ¦¼Æ·Ö°å£¬×Ô¶¯´´½¨: "<<objname << endl;
+		cout << u8"æ²¡æœ‰æ‰¾åˆ°å¯¹åº”è®¡åˆ†æ¿ï¼Œè‡ªåŠ¨åˆ›å»º: "<<objname << endl;
 		runcmd("scoreboard objectives add \"" + objname + "\" dummy money");
 		return 0;
 	}
@@ -1332,7 +1331,7 @@ void addmoney(string xuid,int money) {
 	auto testobj = landmoney_scoreboard->getobject(&objname);
 
 	if (!testobj) {
-		cout << u8"Ã»ÓĞÕÒµ½¶ÔÓ¦¼Æ·Ö°å£¬×Ô¶¯´´½¨: " << objname << endl;
+		cout << u8"æ²¡æœ‰æ‰¾åˆ°å¯¹åº”è®¡åˆ†æ¿ï¼Œè‡ªåŠ¨åˆ›å»º: " << objname << endl;
 		runcmd("scoreboard objectives add \"" + objname + "\" dummy money");
 	}
 
@@ -1353,8 +1352,8 @@ bool removemoney(string xuid, int money) {
 	return false;
 }
 
-//===============guiÄ£¿é==================
-//»ñÈ¡µØÍ¼ĞÅÏ¢(ÓÃÓÚ»ñÈ¡xuid)
+//===============guiæ¨¡å—==================
+//è·å–åœ°å›¾ä¿¡æ¯(ç”¨äºè·å–xuid)
 static VA pxuid_level;
 THook(Player*, MSSYM_MD5_c4b0cddb50ed88e87acce18b5bd3fb8a,
 	Player* _this, VA level, __int64 a3, int a4, __int64 a5, __int64 a6, void* xuid, std::string& strxuid, __int64* a9, __int64 a10, __int64 a11) {
@@ -1362,7 +1361,7 @@ THook(Player*, MSSYM_MD5_c4b0cddb50ed88e87acce18b5bd3fb8a,
 	return original(_this, level, a3, a4, a5, a6, xuid, strxuid, a9, a10, a11);
 }
 
-// Íæ¼ÒÑ¡Ôñ±íµ¥
+// ç©å®¶é€‰æ‹©è¡¨å•
 THook(void, MSSYM_MD5_8b7f7560f9f8353e6e9b16449ca999d2,
 	VA _this, VA id, VA handle, ModalFormResponsePacket** fp) {
 	
@@ -1379,49 +1378,49 @@ THook(void, MSSYM_MD5_8b7f7560f9f8353e6e9b16449ca999d2,
 			auto formid = fid;
 			auto selected = fmp->getSelectStr();
 			if (formid == gui_helpfid[uid]) {
-				if (selected == "0") {//¿ªÆôÁìµØÑ¡Ôñ
+				if (selected == "0") {//å¼€å¯é¢†åœ°é€‰æ‹©
 					playerOpen[uid] = true;
 					TextType tp{ RAW };
-					sendText(uid, u8"¡ìaÒÑ¿ªÆôÁìµØÑ¡ÔñÄ£Ê½\n¡ìd·ÅÖÃ·½¿é¿ÉÑ¡ÔñµãA\n¡ìe¿ÕÊÖµã»÷µØÃæ¿ÉÍË³öÁìµØÑ¡ÔñÄ£Ê½", tp);
+					sendText(uid, u8"Â§aå·²å¼€å¯é¢†åœ°é€‰æ‹©æ¨¡å¼\nÂ§dæ”¾ç½®æ–¹å—å¯é€‰æ‹©ç‚¹A\nÂ§eç©ºæ‰‹ç‚¹å‡»åœ°é¢å¯é€€å‡ºé¢†åœ°é€‰æ‹©æ¨¡å¼", tp);
 				}
-				if (selected == "1") {//¹Ø±ÕÁìµØÑ¡Ôñ
+				if (selected == "1") {//å…³é—­é¢†åœ°é€‰æ‹©
 					playerOpen.erase(uid);
 					playerSetA[uid]="0";
 					playerSetB[uid]="0";
 
-					string say = u8"¡ìcÍË³öÁìµØÑ¡ÔñÄ£Ê½";
+					string say = u8"Â§cé€€å‡ºé¢†åœ°é€‰æ‹©æ¨¡å¼";
 
 					sendText(uid, say, RAW);
 				}
-				if (selected == "2") {//ÁìµØ³öÊÛ
+				if (selected == "2") {//é¢†åœ°å‡ºå”®
 					int money;
 					string landpo;
 					if (land_sell(uid, point, &money,&landpo)) {
-						string str2 = u8"¡ìeÇëÈ·¶¨ÄãÊÇ·ñÒª³öÊÛ½ÅÏÂÁìµØ: ";
+						string str2 = u8"Â§eè¯·ç¡®å®šä½ æ˜¯å¦è¦å‡ºå”®è„šä¸‹é¢†åœ°: ";
 						str2.append(landpo);
-						str2.append(u8"\n¡ìb½«»ñµÃ½ğ±Ò: ");
+						str2.append(u8"\nÂ§bå°†è·å¾—é‡‘å¸: ");
 						char aa[128];
 						sprintf_s(aa, u8"%d", money);
 						str2.append(aa);
 
-						gui_sellfid[uid] = send_landsellgui(uid, u8"¡ìbÊÇ·ñ³öÊÛ¸ÃÁìµØ", str2, u8"È·¶¨", u8"È¡Ïû");
+						gui_sellfid[uid] = send_landsellgui(uid, u8"Â§bæ˜¯å¦å‡ºå”®è¯¥é¢†åœ°", str2, u8"ç¡®å®š", u8"å–æ¶ˆ");
 					}
 					else {
-						sendText(uid, u8"¡ìcÎŞ·¨³öÊÛÁìµØ", RAW);
+						sendText(uid, u8"Â§cæ— æ³•å‡ºå”®é¢†åœ°", RAW);
 					}
 				}
-				if (selected == "3") {//ÁìµØĞÅÏ¢
+				if (selected == "3") {//é¢†åœ°ä¿¡æ¯
 					land_info(uid, point);
 				}
-				if (selected == "4") {//·ÖÏíÁìµØ
+				if (selected == "4") {//åˆ†äº«é¢†åœ°
 					gui_landsharefid[uid] = send_landshare_gui(uid);
 				}
-				if (selected == "5") {//È¨ÏŞÉèÖÃ
+				if (selected == "5") {//æƒé™è®¾ç½®
 					gui_landpermissionfid[uid]=send_landpermission_gui(uid);
 				}
 				gui_helpfid.erase(uid);
 			};
-			//ÁìµØ¹ºÂò
+			//é¢†åœ°è´­ä¹°
 			if (formid == gui_buyfid[uid]) {
 				if (selected == "true") {
 					int s;
@@ -1438,26 +1437,26 @@ THook(void, MSSYM_MD5_8b7f7560f9f8353e6e9b16449ca999d2,
 							writeLandJson(uid, point, playername);
 							writePlayerJson(uid, point, "", false, false, false, false, false);
 
-							sprintf_s(str, u8"¡ìa³É¹¦¹ºÂòÁìµØ,»¨·Ñ: %d", money);
+							sprintf_s(str, u8"Â§aæˆåŠŸè´­ä¹°é¢†åœ°,èŠ±è´¹: %d", money);
 							sendText(uid, str, RAW);
 						}
 						else {
-							sendText(uid, u8"¡ìc¹ºÂòÊ§°Ü¡£", RAW);
+							sendText(uid, u8"Â§cè´­ä¹°å¤±è´¥ã€‚", RAW);
 						}
 						playerOpen.erase(uid);
 						playerSetA[uid]="0";
 						playerSetB[uid]="0";
 					}
 					else {
-						sendText(uid, u8"¡ìc¹ºÂòÊ§°Ü£¬ÇëÖØĞÂÈ¦µØ¡£", RAW);
+						sendText(uid, u8"Â§cè´­ä¹°å¤±è´¥ï¼Œè¯·é‡æ–°åœˆåœ°ã€‚", RAW);
 					}
 				}
 				if (selected == "false") {
-					sendText(uid, u8"¡ìcÇëÖØĞÂÈ¦µØ\n¡ìe¿ÕÊÖµã»÷µØÃæ¿ÉÍË³öÁìµØÑ¡ÔñÄ£Ê½", RAW);
+					sendText(uid, u8"Â§cè¯·é‡æ–°åœˆåœ°\nÂ§eç©ºæ‰‹ç‚¹å‡»åœ°é¢å¯é€€å‡ºé¢†åœ°é€‰æ‹©æ¨¡å¼", RAW);
 				}
 				gui_buyfid.erase(uid);
 			};
-			//ÁìµØ³öÊÛ
+			//é¢†åœ°å‡ºå”®
 			if (formid == gui_sellfid[uid]) {
 				if (selected == "true") {
 					int money;
@@ -1469,17 +1468,17 @@ THook(void, MSSYM_MD5_8b7f7560f9f8353e6e9b16449ca999d2,
 						string str;
 						char str2[256];
 						addmoney(uid, money);
-						sprintf_s(str2, u8"¡ìa³É¹¦³öÊÛÁìµØ£¡»ñµÃ½ğ±Ò: %d", money);
+						sprintf_s(str2, u8"Â§aæˆåŠŸå‡ºå”®é¢†åœ°ï¼è·å¾—é‡‘å¸: %d", money);
 						str.append(str2);
 						sendText(uid, str, RAW);
 					}
 					else {
-						sendText(uid, u8"¡ìc³öÊÛÊ§°Ü£¡", RAW);
+						sendText(uid, u8"Â§cå‡ºå”®å¤±è´¥ï¼", RAW);
 					}
 
 				}
 				if (selected == "false") {
-					sendText(uid, u8"¡ìdÈ¡ÏûÁìµØ³öÊÛ", RAW);
+					sendText(uid, u8"Â§då–æ¶ˆé¢†åœ°å‡ºå”®", RAW);
 				}
 				
 				gui_sellfid.erase(uid);
@@ -1489,7 +1488,7 @@ THook(void, MSSYM_MD5_8b7f7560f9f8353e6e9b16449ca999d2,
 				string id1 = selected.substr(1, 1);
 				//cout << id1 << "...." << id2 << endl;
 				if (id1 != "0" && id1 != "1") {
-					//sendText(uid, u8"Óöµ½Ò»¸öÆæ¹ÖµÄ´íÎó£¡ÇëÖØĞÂ·ÖÏí", RAW);
+					//sendText(uid, u8"é‡åˆ°ä¸€ä¸ªå¥‡æ€ªçš„é”™è¯¯ï¼è¯·é‡æ–°åˆ†äº«", RAW);
 				}
 				else {
 					int a = selected.find(",");
@@ -1505,7 +1504,7 @@ THook(void, MSSYM_MD5_8b7f7560f9f8353e6e9b16449ca999d2,
 
 							get_player_json(uid, &putblock, &destroyblock, &useitem, &openchest, &attack);
 							writePlayerJson(uid, "",sharename, putblock, destroyblock, useitem, openchest, attack);
-							sendText(uid, u8"¡ìd·ÖÏí³É¹¦£¡", RAW);
+							sendText(uid, u8"Â§dåˆ†äº«æˆåŠŸï¼", RAW);
 						}
 					}
 					if (id1 == "1") {
@@ -1516,7 +1515,7 @@ THook(void, MSSYM_MD5_8b7f7560f9f8353e6e9b16449ca999d2,
 							string sharename = root["name"][id2].asString();
 
 							removePlayerJson_land_sharename(uid, "", sharename);
-							sendText(uid, u8"¡ìdÈ¡Ïû·ÖÏí³É¹¦£¡", RAW);
+							sendText(uid, u8"Â§då–æ¶ˆåˆ†äº«æˆåŠŸï¼", RAW);
 						}
 					}
 
@@ -1577,7 +1576,7 @@ THook(void, MSSYM_MD5_8b7f7560f9f8353e6e9b16449ca999d2,
 						attack = false;
 					}
 					writePlayerJson(uid,"","", putblock, destroyblock, useitem, openchest, attack);
-					sendText(uid, u8"¡ìaÉèÖÃ³É¹¦", RAW);
+					sendText(uid, u8"Â§aè®¾ç½®æˆåŠŸ", RAW);
 				}
 				gui_landpermissionfid.erase(uid);
 			}
@@ -1621,28 +1620,28 @@ unsigned sendForm(string uuid, std::string str)
 
 }
 
-// ×Ü²Ëµ¥
+// æ€»èœå•
 static UINT landhelp_gui(string xuid) {
 	Json::Value jv;
 	jv["type"] = "form";
-	jv["title"] = u8"ÁìµØÏµÍ³";
-	jv["content"] = u8"¡ìeÑ¡Ïî";
+	jv["title"] = u8"é¢†åœ°ç³»ç»Ÿ";
+	jv["content"] = u8"Â§eé€‰é¡¹";
 	jv["buttons"];
 
 	Json::Value jv2;
-	jv2["text"] = u8"¡ì9½øÈëÁìµØÑ¡ÔñÄ£Ê½";
+	jv2["text"] = u8"Â§9è¿›å…¥é¢†åœ°é€‰æ‹©æ¨¡å¼";
 	Json::Value jv3;
-	jv3["text"] = u8"¡ì9ÍË³öÁìµØÑ¡ÔñÄ£Ê½";
+	jv3["text"] = u8"Â§9é€€å‡ºé¢†åœ°é€‰æ‹©æ¨¡å¼";
 	Json::Value jv4;
-	jv4["text"] = u8"¡ì9ÁìµØ³öÊÛ";
+	jv4["text"] = u8"Â§9é¢†åœ°å‡ºå”®";
 	
 	Json::Value jv5;
-	jv5["text"] = u8"¡ì9²éÑ¯½ÅÏÂÁìµØĞÅÏ¢";
+	jv5["text"] = u8"Â§9æŸ¥è¯¢è„šä¸‹é¢†åœ°ä¿¡æ¯";
 
 	Json::Value jv6;
-	jv6["text"] = u8"¡ì9·ÖÏíÄãÓµÓĞµÄÁìµØ";
+	jv6["text"] = u8"Â§9åˆ†äº«ä½ æ‹¥æœ‰çš„é¢†åœ°";
 	Json::Value jv7;
-	jv7["text"] = u8"¡ì9¹²ÏíÈ¨ÏŞÉèÖÃ";
+	jv7["text"] = u8"Â§9å…±äº«æƒé™è®¾ç½®";
 
 	jv["buttons"].append(jv2);
 	jv["buttons"].append(jv3);
@@ -1653,34 +1652,34 @@ static UINT landhelp_gui(string xuid) {
 
 	return sendForm(xuid, jv.toStyledString());
 }
-// ÁìµØ¹ºÂògui
+// é¢†åœ°è´­ä¹°gui
 static UINT send_landbuygui(string xuid, string title, string content, string button1, string button2) {
 	Player* p = onlinePlayers[xuid];
 	std::string str = createModalFormString(title, content, button1, button2);
 	return sendForm(xuid, str);
 }
-// ÁìµØ³öÊÛgui
+// é¢†åœ°å‡ºå”®gui
 static UINT send_landsellgui(string xuid, string title, string content, string button1, string button2) {
 	Player* p = onlinePlayers[xuid];
 	std::string str = createModalFormString(title, content, button1, button2);
 	return sendForm(xuid, str);
 }
-// ·ÖÏíÁìµØgui
+// åˆ†äº«é¢†åœ°gui
 static UINT send_landshare_gui(string xuid) {
 	Json::Value jv;
 	jv["type"] = "custom_form";
-	jv["title"] = u8"¡ì9ÁìµØ·ÖÏí";
+	jv["title"] = u8"Â§9é¢†åœ°åˆ†äº«";
 	jv["content"];
 
 	Json::Value jv2;
 	jv2["type"] = "dropdown";
-	jv2["text"] = u8"¡ìeÇëÑ¡Ôñ£º";
-	jv2["options"].append(u8"·ÖÏí");
-	jv2["options"].append(u8"È¡Ïû·ÖÏí");
+	jv2["text"] = u8"Â§eè¯·é€‰æ‹©ï¼š";
+	jv2["options"].append(u8"åˆ†äº«");
+	jv2["options"].append(u8"å–æ¶ˆåˆ†äº«");
 
 	Json::Value jv3;
 	jv3["type"] = "dropdown";
-	jv3["text"] = u8"¡ìeÇëÑ¡ÔñÍæ¼Ò£º";
+	jv3["text"] = u8"Â§eè¯·é€‰æ‹©ç©å®¶ï¼š";
 	map<string, string>::iterator it;
 	Json::Value name;
 	name["name"];
@@ -1721,11 +1720,11 @@ static UINT send_landshare_gui(string xuid) {
 
 	return sendForm(xuid, jv.toStyledString());
 }
-// ÁìµØÈ¨ÏŞgui
+// é¢†åœ°æƒé™gui
 static UINT send_landpermission_gui(string xuid) {
 	Json::Value jv;
 	jv["type"] = "custom_form";
-	jv["title"] = u8"¡ì9ÁìµØÈ¨ÏŞÉèÖÃ";
+	jv["title"] = u8"Â§9é¢†åœ°æƒé™è®¾ç½®";
 	jv["content"];
 
 	bool putblock; bool destroyblock; bool useitem; bool openchest; bool attack;
@@ -1733,27 +1732,27 @@ static UINT send_landpermission_gui(string xuid) {
 
 	Json::Value jv2;
 	jv2["type"] = "toggle";
-	jv2["text"] = u8"¡ì9·ÅÖÃ·½¿éÈ¨ÏŞ£º";
+	jv2["text"] = u8"Â§9æ”¾ç½®æ–¹å—æƒé™ï¼š";
 	jv2["default"] = putblock;
 
 	Json::Value jv3;
 	jv3["type"] = "toggle";
-	jv3["text"] = u8"¡ì9ÆÆ»µ·½¿éÈ¨ÏŞ£º";
+	jv3["text"] = u8"Â§9ç ´åæ–¹å—æƒé™ï¼š";
 	jv3["default"] = destroyblock;
 
 	Json::Value jv4;
 	jv4["type"] = "toggle";
-	jv4["text"] = u8"¡ì9Ê¹ÓÃÎïÆ·È¨ÏŞ£º";
+	jv4["text"] = u8"Â§9ä½¿ç”¨ç‰©å“æƒé™ï¼š";
 	jv4["default"] = useitem;
 
 	Json::Value jv5;
 	jv5["type"] = "toggle";
-	jv5["text"] = u8"¡ì9´ò¿ªÈİÆ÷È¨ÏŞ£º\n¡ì1(ĞèÏÈ¿ªÆôÊ¹ÓÃÎïÆ·È¨ÏŞ)";
+	jv5["text"] = u8"Â§9æ‰“å¼€å®¹å™¨æƒé™ï¼š\nÂ§1(éœ€å…ˆå¼€å¯ä½¿ç”¨ç‰©å“æƒé™)";
 	jv5["default"] = openchest;
 
 	Json::Value jv6;
 	jv6["type"] = "toggle";
-	jv6["text"] = u8"¡ì9¹¥»÷È¨ÏŞ£º";
+	jv6["text"] = u8"Â§9æ”»å‡»æƒé™ï¼š";
 	jv6["default"] = attack;
 
 	jv["content"].append(jv2);
@@ -1764,24 +1763,24 @@ static UINT send_landpermission_gui(string xuid) {
 
 	return sendForm(xuid, jv.toStyledString());
 }
-// ÁìµØĞÅÏ¢gui
+// é¢†åœ°ä¿¡æ¯gui
 void send_landinfo_gui(string xuid, string point, string landplayeruid,string name, string share_name) {
 	Json::Value jv;
 	jv["type"] = "form";
-	jv["title"] = u8"¡ì9ÁìµØĞÅÏ¢";
-	string str = u8"¡ìdÁìµØ·¶Î§: ";
+	jv["title"] = u8"Â§9é¢†åœ°ä¿¡æ¯";
+	string str = u8"Â§dé¢†åœ°èŒƒå›´: ";
 	str.append(point);
-	str.append(u8"\n¡ìdÁìµØÖ÷ÈË: ");
+	str.append(u8"\nÂ§dé¢†åœ°ä¸»äºº: ");
 	str.append(name);
-	str.append(u8"\n¡ìdÁìµØÖ÷ÈËxuid: ");
+	str.append(u8"\nÂ§dé¢†åœ°ä¸»äººxuid: ");
 	str.append(landplayeruid);
-	str.append(u8"\n¡ìd¹²ÏíÍæ¼ÒÃûµ¥: ");
+	str.append(u8"\nÂ§då…±äº«ç©å®¶åå•: ");
 	str.append(share_name);
 
 	jv["content"] = str;
 	jv["buttons"];
 	Json::Value jv2;
-	jv2["text"] = u8"È·¶¨";
+	jv2["text"] = u8"ç¡®å®š";
 
 	jv["buttons"].append(jv2);
 
@@ -1796,7 +1795,7 @@ void land_info(string uid, string point) {
 
 	string landpo = island(x, y, z);
 	if (landpo == "0") {
-		sendText(uid, u8"¡ìcÄãµÄ½ÅÏÂÃ»ÓĞÁìµØ£¡", RAW);
+		sendText(uid, u8"Â§cä½ çš„è„šä¸‹æ²¡æœ‰é¢†åœ°ï¼", RAW);
 		return;
 	}
 	string content = PLAYERCONFIG;
@@ -1821,7 +1820,7 @@ void land_info(string uid, string point) {
 	
 	send_landinfo_gui(uid, landpo,landop, name, share_name);
 }
-//ÎÊ´ğÊ½gui
+//é—®ç­”å¼gui
 std::string createModalFormString(std::string title, std::string content, std::string button1, std::string button2) {
 	Json::Value jv;
 	jv["type"] = "modal";
@@ -1831,19 +1830,19 @@ std::string createModalFormString(std::string title, std::string content, std::s
 	jv["button2"] = button2;
 	return jv.toStyledString();
 }
-//==================== ÊÂ¼şÀ¹½Ø£¨THook£© =======================
+//==================== äº‹ä»¶æ‹¦æˆªï¼ˆTHookï¼‰ =======================
 
 THook(void*, MSSYM_B2QQE170ServerScoreboardB2AAA4QEAAB1AE24VCommandSoftEnumRegistryB2AAE16PEAVLevelStorageB3AAAA1Z, void* _this, void* a2, void* a3) {
 	landmoney_scoreboard = (Scoreboard*)original(_this, a2, a3);
 	return landmoney_scoreboard;
 }
-// »ñÈ¡Ö¸Áî¶ÓÁĞ
+// è·å–æŒ‡ä»¤é˜Ÿåˆ—
 THook(VA, MSSYM_MD5_3b8fb7204bf8294ee636ba7272eec000,
 	VA _this) {
 	p_spscqueue = original(_this);
 	return p_spscqueue;
 }
-// Íæ¼ÒÊäÈëÃüÁî
+// ç©å®¶è¾“å…¥å‘½ä»¤
 THook(void, MSSYM_B1QA6handleB1AE20ServerNetworkHandlerB2AAE26UEAAXAEBVNetworkIdentifierB2AAE24AEBVCommandRequestPacketB3AAAA1Z,
 	VA _this, VA id, CommandRequestPacket* crp) {
 	Player* pPlayer = SYMCALL(Player*, MSSYM_B2QUE15getServerPlayerB1AE20ServerNetworkHandlerB2AAE20AEAAPEAVServerPlayerB2AAE21AEBVNetworkIdentifierB2AAA1EB1AA1Z,
@@ -1859,7 +1858,7 @@ THook(void, MSSYM_B1QA6handleB1AE20ServerNetworkHandlerB2AAE26UEAAXAEBVNetworkId
 		}
 		else {
 			TextType tp{ RAW };
-			sendText(uid, u8"¡ìcÖ»ÄÜÔÚÖ÷ÊÀ½çÊ¹ÓÃÁìµØÏµÍ³", tp);
+			sendText(uid, u8"Â§cåªèƒ½åœ¨ä¸»ä¸–ç•Œä½¿ç”¨é¢†åœ°ç³»ç»Ÿ", tp);
 		}
 		return;
 	}
@@ -1868,11 +1867,11 @@ THook(void, MSSYM_B1QA6handleB1AE20ServerNetworkHandlerB2AAE26UEAAXAEBVNetworkId
 			playerOpen[uid] = true;
 
 			TextType tp{ RAW };
-			sendText(uid, u8"¡ìaÒÑ¿ªÆôÁìµØÑ¡ÔñÄ£Ê½\n¡ìb·ÅÖÃ·½¿é¿ÉÑ¡ÔñµãA\n¡ìe¿ÕÊÖµã»÷µØÃæ¿ÉÍË³öÁìµØÑ¡ÔñÄ£Ê½", tp);
+			sendText(uid, u8"Â§aå·²å¼€å¯é¢†åœ°é€‰æ‹©æ¨¡å¼\nÂ§bæ”¾ç½®æ–¹å—å¯é€‰æ‹©ç‚¹A\nÂ§eç©ºæ‰‹ç‚¹å‡»åœ°é¢å¯é€€å‡ºé¢†åœ°é€‰æ‹©æ¨¡å¼", tp);
 		}
 		else {
 			TextType tp{ RAW };
-			sendText(uid, u8"¡ìcÖ»ÄÜÔÚÖ÷ÊÀ½çÊ¹ÓÃÁìµØÏµÍ³", tp);
+			sendText(uid, u8"Â§cåªèƒ½åœ¨ä¸»ä¸–ç•Œä½¿ç”¨é¢†åœ°ç³»ç»Ÿ", tp);
 		}
 		return;
 	}
@@ -1884,48 +1883,48 @@ THook(void, MSSYM_B1QA6handleB1AE20ServerNetworkHandlerB2AAE26UEAAXAEBVNetworkId
 				playerSetA[uid] = "0";
 				playerSetB[uid] = "0";
 
-				sendText(uid, u8"¡ìcÒÑ¹Ø±ÕÁìµØÑ¡ÔñÄ£Ê½", tp);
+				sendText(uid, u8"Â§cå·²å…³é—­é¢†åœ°é€‰æ‹©æ¨¡å¼", tp);
 			}
 			else {
-				sendText(uid, u8"¡ìcÎ´¿ªÆôÁìµØÑ¡ÔñÄ£Ê½", tp);
+				sendText(uid, u8"Â§cæœªå¼€å¯é¢†åœ°é€‰æ‹©æ¨¡å¼", tp);
 			}
 		}
 		else {
 			TextType tp{ RAW };
-			sendText(uid, u8"¡ìcÖ»ÄÜÔÚÖ÷ÊÀ½çÊ¹ÓÃÁìµØÏµÍ³", tp);
+			sendText(uid, u8"Â§cåªèƒ½åœ¨ä¸»ä¸–ç•Œä½¿ç”¨é¢†åœ°ç³»ç»Ÿ", tp);
 		}
 		return;
 	}
 	if (cmd == "/landreload") {
 		TextType tp{ RAW };
-		sendText(uid, u8"¡ìcÇëÔÚ¿ØÖÆÌ¨ÊäÈë´ËÃüÁî", tp);
+		sendText(uid, u8"Â§cè¯·åœ¨æ§åˆ¶å°è¾“å…¥æ­¤å‘½ä»¤", tp);
 		return;
 	}
 	if (cmd == "/landsell") {
 		int money;
 		string landpo;
 		if (land_sell(uid, pPlayer->getPos()->toJsonString(), &money,&landpo)) {
-			string str2 = u8"¡ì6ÇëÈ·¶¨ÄãÊÇ·ñÒª³öÊÛ½ÅÏÂÁìµØ: ";
+			string str2 = u8"Â§6è¯·ç¡®å®šä½ æ˜¯å¦è¦å‡ºå”®è„šä¸‹é¢†åœ°: ";
 			str2.append(landpo);
-			str2.append(u8"\n¡ìe½«»ñµÃ½ğ±Ò: ");
+			str2.append(u8"\nÂ§eå°†è·å¾—é‡‘å¸: ");
 			char aa[128];
 			sprintf_s(aa, u8"%d", money);
 			str2.append(aa);
 
-			gui_sellfid[uid] = send_landsellgui(uid, u8"¡ìbÊÇ·ñ³öÊÛ¸ÃÁìµØ", str2, u8"È·¶¨", u8"È¡Ïû");
+			gui_sellfid[uid] = send_landsellgui(uid, u8"Â§bæ˜¯å¦å‡ºå”®è¯¥é¢†åœ°", str2, u8"ç¡®å®š", u8"å–æ¶ˆ");
 		}
 		else {
-			sendText(uid, u8"¡ìc³öÊÛÊ§°Ü£¡", RAW);
+			sendText(uid, u8"Â§cå‡ºå”®å¤±è´¥ï¼", RAW);
 		}
 		return;
 	}
 	original(_this, id, crp);
 }
-// ¿ØÖÆÌ¨ÃüÁî
+// æ§åˆ¶å°å‘½ä»¤
 THook(bool, MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e,
 	VA _this, std::string* cmd) {
 	if (*cmd == "landreload") {
-		cout << u8"ÖØĞÂÔØÈëÅäÖÃÎÄ¼şÖĞ.." << endl;
+		cout << u8"é‡æ–°è½½å…¥é…ç½®æ–‡ä»¶ä¸­.." << endl;
 		LCONFIG = getjson(".\\land\\config.json");
 		LANDCONFIG = getjson(".\\land\\land.json");
 		PLAYERCONFIG = getjson(".\\land\\player.json");
@@ -1933,7 +1932,7 @@ THook(bool, MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e,
 	}
 	return original(_this, cmd);
 }
-// Íæ¼ÒÊ¹ÓÃÎïÆ·
+// ç©å®¶ä½¿ç”¨ç‰©å“
 THook(bool, MSSYM_B1QA9useItemOnB1AA8GameModeB2AAA4UEAAB1UE14NAEAVItemStackB2AAE12AEBVBlockPosB2AAA9EAEBVVec3B2AAA9PEBVBlockB3AAAA1Z,
 	void* _this, ItemStack* item, BlockPos* pBlkpos, unsigned __int8 a4, void* v5, Block* pBlk) {
 
@@ -1954,7 +1953,7 @@ THook(bool, MSSYM_B1QA9useItemOnB1AA8GameModeB2AAA4UEAAB1UE14NAEAVItemStackB2AAE
 			if (dimid == 0) {
 				gui_helpfid[uid] = landhelp_gui(uid);
 			}
-			else { sendText(uid, u8"¡ìcÁìµØÏµÍ³Ö»ÄÜÔÚÖ÷ÊÀ½çÊ¹ÓÃ£¡", RAW); }
+			else { sendText(uid, u8"Â§cé¢†åœ°ç³»ç»Ÿåªèƒ½åœ¨ä¸»ä¸–ç•Œä½¿ç”¨ï¼", RAW); }
 		}
 		if (dimid == 0) {
 
@@ -1963,14 +1962,14 @@ THook(bool, MSSYM_B1QA9useItemOnB1AA8GameModeB2AAA4UEAAB1UE14NAEAVItemStackB2AAE
 				playerSetA[uid] = "0";
 				playerSetB[uid] = "0";
 
-				string say = u8"¡ìcÍË³öÁìµØÑ¡ÔñÄ£Ê½";
+				string say = u8"Â§cé€€å‡ºé¢†åœ°é€‰æ‹©æ¨¡å¼";
 
 				sendText(uid, say, RAW);
 				return 0;
 			}
 
 			if (!island_player(uid, pPlayer->getNameTag(), position, USEITEM)) {
-				sendText(uid, u8"¡ìc[ÁìµØÏµÍ³]ÄãÃ»ÓĞ¸ÃÁìµØÊ¹ÓÃÎïÆ·µÄÈ¨ÏŞ£¡", RAW);
+				sendText(uid, u8"Â§c[é¢†åœ°ç³»ç»Ÿ]ä½ æ²¡æœ‰è¯¥é¢†åœ°ä½¿ç”¨ç‰©å“çš„æƒé™ï¼", RAW);
 				return 0;
 			}
 		}
@@ -1978,7 +1977,7 @@ THook(bool, MSSYM_B1QA9useItemOnB1AA8GameModeB2AAA4UEAAB1UE14NAEAVItemStackB2AAE
 	return original(_this, item, pBlkpos, a4, v5, pBlk);
 
 }
-// Íæ¼Ò·ÅÖÃ·½¿é
+// ç©å®¶æ”¾ç½®æ–¹å—
 THook(bool,MSSYM_B1QA8mayPlaceB1AE11BlockSourceB2AAA4QEAAB1UE10NAEBVBlockB2AAE12AEBVBlockPosB2AAE10EPEAVActorB3AAUA1NB1AA1Z,
 	BlockSource* class_this, Block* pBlk, BlockPos* pBlkpos, unsigned __int8 a4, Player* pPlayer, bool _bool) {
 
@@ -1997,22 +1996,22 @@ THook(bool,MSSYM_B1QA8mayPlaceB1AE11BlockSourceB2AAA4QEAAB1UE10NAEBVBlockB2AAE12
 			if (playerOpen[uid]) {
 				playerSetA[uid] = position;
 
-				string say = u8"¡ìbÄãÒÑÉèÖÃµãA£º";
+				string say = u8"Â§bä½ å·²è®¾ç½®ç‚¹Aï¼š";
 				say.append(playerSetA[uid]);
-				say.append(u8"\n¡ìdÆÆ»µ·½¿é¿ÉÉèÖÃµãB¡£\n¡ìe¿ÕÊÖµã»÷µØÃæ¿ÉÍË³öÁìµØÑ¡ÔñÄ£Ê½£¡");
+				say.append(u8"\nÂ§dç ´åæ–¹å—å¯è®¾ç½®ç‚¹Bã€‚\nÂ§eç©ºæ‰‹ç‚¹å‡»åœ°é¢å¯é€€å‡ºé¢†åœ°é€‰æ‹©æ¨¡å¼ï¼");
 
 				sendText(uid, say, RAW);
 				return 0;
 			}
 			if (!island_player(uid, pPlayer->getNameTag(), position, PUTBLOCK)) {
-				sendText(uid, u8"¡ìc[ÁìµØÏµÍ³]ÄãÃ»ÓĞ¸ÃÁìµØ·ÅÖÃ·½¿éµÄÈ¨ÏŞ£¡", RAW);
+				sendText(uid, u8"Â§c[é¢†åœ°ç³»ç»Ÿ]ä½ æ²¡æœ‰è¯¥é¢†åœ°æ”¾ç½®æ–¹å—çš„æƒé™ï¼", RAW);
 				return 0;
 			}
 		}
 	}
 	return original( class_this,pBlk,pBlkpos,a4,pPlayer,_bool);
 }
-// Íæ¼ÒÆÆ»µ·½¿é
+// ç©å®¶ç ´åæ–¹å—
 THook(bool, MSSYM_B2QUE20destroyBlockInternalB1AA8GameModeB2AAA4AEAAB1UE13NAEBVBlockPosB2AAA1EB1AA1Z,
 	void* _this, BlockPos* pBlkpos) {
 
@@ -2027,19 +2026,19 @@ THook(bool, MSSYM_B2QUE20destroyBlockInternalB1AA8GameModeB2AAA4AEAAB1UE13NAEBVB
 			TextType tp{ RAW };
 			if (playerOpen[uid]) {
 				if (playerSetA[uid] == "0" || !playerSetA.count(uid)) {
-					sendText(uid, u8"¡ìcÉèÖÃÊ§°Ü£¬ÇëÏÈÉèÖÃµãA£¡\n¡ìe¿ÕÊÖµã»÷µØÃæ¿ÉÍË³öÁìµØÑ¡ÔñÄ£Ê½£¡", tp);
+					sendText(uid, u8"Â§cè®¾ç½®å¤±è´¥ï¼Œè¯·å…ˆè®¾ç½®ç‚¹Aï¼\nÂ§eç©ºæ‰‹ç‚¹å‡»åœ°é¢å¯é€€å‡ºé¢†åœ°é€‰æ‹©æ¨¡å¼ï¼", tp);
 					return false;
 				}
 				else {
 					playerSetB[uid] = position;
-					//string say = u8"¡ìbÄãÒÑÉèÖÃµãB£º";
+					//string say = u8"Â§bä½ å·²è®¾ç½®ç‚¹Bï¼š";
 					//say.append(playerSetB[uid]);
-					//say.append(u8"\n¡ìe¿ÕÊÖµã»÷µØÃæ¿ÉÍË³öÁìµØÑ¡ÔñÄ£Ê½£¡");
+					//say.append(u8"\nÂ§eç©ºæ‰‹ç‚¹å‡»åœ°é¢å¯é€€å‡ºé¢†åœ°é€‰æ‹©æ¨¡å¼ï¼");
 
 					string poa = playerSetA[uid];
 					string pob = playerSetB[uid];
 					if (poa == "0" || pob == "0") {
-						sendText(uid, u8"¡ìcÉèÖÃÊ§°Ü£¬ÇëÏÈÖØĞÂÉèÖÃ\n¡ìe¿ÕÊÖµã»÷µØÃæ¿ÉÍË³öÁìµØÑ¡ÔñÄ£Ê½£¡", tp);
+						sendText(uid, u8"Â§cè®¾ç½®å¤±è´¥ï¼Œè¯·å…ˆé‡æ–°è®¾ç½®\nÂ§eç©ºæ‰‹ç‚¹å‡»åœ°é¢å¯é€€å‡ºé¢†åœ°é€‰æ‹©æ¨¡å¼ï¼", tp);
 						return false;
 					}
 					auto b1 = poa.find(".");
@@ -2060,28 +2059,28 @@ THook(bool, MSSYM_B2QUE20destroyBlockInternalB1AA8GameModeB2AAA4AEAAB1UE13NAEBVB
 					int s = dx * dz;
 					int money = s * (get_landmoney(true));
 
-					string str = u8"¡ì6µãA: ";
+					string str = u8"Â§6ç‚¹A: ";
 					str.append(poa);
-					str.append(u8"\n¡ì6µãB: ");
+					str.append(u8"\nÂ§6ç‚¹B: ");
 					str.append(pob);
 					char str2[512];
-					sprintf_s(str2, u8"\n¡ìd×ÜÃæ»ı: %d \n¡ìeĞèÒª½ğ±Ò: %d\n¡ìeÒÑÓĞ½ğ±Ò: %d", s, money, getmoney(uid));
+					sprintf_s(str2, u8"\nÂ§dæ€»é¢ç§¯: %d \nÂ§eéœ€è¦é‡‘å¸: %d\nÂ§eå·²æœ‰é‡‘å¸: %d", s, money, getmoney(uid));
 					str.append(str2);
 
-					gui_buyfid[uid] = send_landbuygui(uid, u8"¡ìbÊÇ·ñ¹ºÂòÁìµØ", str, u8"¹ºÂò¸ÃÁìµØ", u8"ÖØĞÂÑ¡ÔñÁìµØ");
+					gui_buyfid[uid] = send_landbuygui(uid, u8"Â§bæ˜¯å¦è´­ä¹°é¢†åœ°", str, u8"è´­ä¹°è¯¥é¢†åœ°", u8"é‡æ–°é€‰æ‹©é¢†åœ°");
 					//sendText(uid, say, RAW);
 				}
 				return false;
 			}
 			if (!island_player(uid, pPlayer->getNameTag(), position, DESTROYBLOCK)) {
-				sendText(uid, u8"¡ìc[ÁìµØÏµÍ³]ÄãÃ»ÓĞ¸ÃÁìµØÆÆ»µ·½¿éµÄÈ¨ÏŞ", tp);
+				sendText(uid, u8"Â§c[é¢†åœ°ç³»ç»Ÿ]ä½ æ²¡æœ‰è¯¥é¢†åœ°ç ´åæ–¹å—çš„æƒé™", tp);
 				return false;
 			}
 		}
 	}
 	return original(_this, pBlkpos);
 }
-// Íæ¼Ò¿ªÏä
+// ç©å®¶å¼€ç®±
 THook(bool, MSSYM_B1QA3useB1AE10ChestBlockB2AAA4UEBAB1UE11NAEAVPlayerB2AAE12AEBVBlockPosB3AAAA1Z,
 	void* _this, Player* pPlayer, BlockPos* pBlkpos) {
 
@@ -2092,13 +2091,13 @@ THook(bool, MSSYM_B1QA3useB1AE10ChestBlockB2AAA4UEBAB1UE11NAEAVPlayerB2AAE12AEBV
 
 	if (pPlayer->getDimensionId() == 0) {
 		if (!island_player(uid, pPlayer->getNameTag(), position, OPENCHEST)) {
-			sendText(uid, u8"¡ìc[ÁìµØÏµÍ³]ÄãÃ»ÓĞ¸ÃÁìµØ¿ªÆôÈİÆ÷µÄÈ¨ÏŞ£¡", RAW);
+			sendText(uid, u8"Â§c[é¢†åœ°ç³»ç»Ÿ]ä½ æ²¡æœ‰è¯¥é¢†åœ°å¼€å¯å®¹å™¨çš„æƒé™ï¼", RAW);
 			return 0;
 		}
 	}
 	return original(_this, pPlayer, pBlkpos);
 }
-// Íæ¼Ò¿ªÈÛÂ¯
+// ç©å®¶å¼€ç†”ç‚‰
 THook(bool, MSSYM_B1QA9startOpenB1AE17FurnaceBlockActorB2AAE15UEAAXAEAVPlayerB3AAAA1Z,
 	void* _this, Player* pPlayer, BlockPos* pBlkpos) {
 
@@ -2108,13 +2107,13 @@ THook(bool, MSSYM_B1QA9startOpenB1AE17FurnaceBlockActorB2AAE15UEAAXAEAVPlayerB3A
 
 	if (pPlayer->getDimensionId() == 0) {
 		if (!island_player(uid, pPlayer->getNameTag(), position, OPENCHEST)) {
-			sendText(uid, u8"¡ìc[ÁìµØÏµÍ³]ÄãÃ»ÓĞ¸ÃÁìµØ¿ªÆôÈİÆ÷µÄÈ¨ÏŞ£¡", RAW);
+			sendText(uid, u8"Â§c[é¢†åœ°ç³»ç»Ÿ]ä½ æ²¡æœ‰è¯¥é¢†åœ°å¼€å¯å®¹å™¨çš„æƒé™ï¼", RAW);
 			return 0;
 		}
 	}
 	return original(_this, pPlayer, pBlkpos);
 }
-// Íæ¼Ò¿ªÍ°
+// ç©å®¶å¼€æ¡¶
 THook(bool, MSSYM_B1QA3useB1AE11BarrelBlockB2AAA4UEBAB1UE11NAEAVPlayerB2AAE12AEBVBlockPosB3AAAA1Z,
 	void* _this, Player* pPlayer, BlockPos* pBlkpos) {
 	auto position = pBlkpos->getPosition()->toJsonString();
@@ -2123,13 +2122,13 @@ THook(bool, MSSYM_B1QA3useB1AE11BarrelBlockB2AAA4UEBAB1UE11NAEAVPlayerB2AAE12AEB
 	if (pPlayer->getDimensionId() == 0) {
 
 		if (!island_player(uid, pPlayer->getNameTag(), position, OPENCHEST)) {
-			sendText(uid, u8"¡ìc[ÁìµØÏµÍ³]ÄãÃ»ÓĞ¸ÃÁìµØ¿ªÆôÈİÆ÷µÄÈ¨ÏŞ£¡", RAW);
+			sendText(uid, u8"Â§c[é¢†åœ°ç³»ç»Ÿ]ä½ æ²¡æœ‰è¯¥é¢†åœ°å¼€å¯å®¹å™¨çš„æƒé™ï¼", RAW);
 			return 0;
 		}
 	}
 	return original(_this, pPlayer, pBlkpos);
 }
-// Íæ¼Ò¹¥»÷Ê±´¥·¢µ÷ÓÃ
+// ç©å®¶æ”»å‡»æ—¶è§¦å‘è°ƒç”¨
 THook(bool, MSSYM_B1QA6attackB1AA6PlayerB2AAA4UEAAB1UE10NAEAVActorB3AAAA1Z,
 	Player* class_this, Actor* pactor) {
 	//std::string p_player_name = class_this->getNameTag();
@@ -2146,14 +2145,14 @@ THook(bool, MSSYM_B1QA6attackB1AA6PlayerB2AAA4UEAAB1UE10NAEAVActorB3AAAA1Z,
 
 		if (class_this->getDimensionId() == 0) {
 			if (!island_player(uid, class_this->getNameTag(), position, ATTACKT)) {
-				sendText(uid, u8"¡ìc[ÁìµØÏµÍ³]ÄãÃ»ÓĞ¸ÃÁìµØµÄ¹¥»÷È¨ÏŞ£¡", RAW);
+				sendText(uid, u8"Â§c[é¢†åœ°ç³»ç»Ÿ]ä½ æ²¡æœ‰è¯¥é¢†åœ°çš„æ”»å‡»æƒé™ï¼", RAW);
 				return false;
 			}
 		}
 	}
     return original(class_this, pactor);
 }
-// Íæ¼ÒÇĞ»»Î¬¶È
+// ç©å®¶åˆ‡æ¢ç»´åº¦
 THook(bool, MSSYM_B2QUE21playerChangeDimensionB1AA5LevelB2AAA4AEAAB1UE11NPEAVPlayerB2AAE26AEAVChangeDimensionRequestB3AAAA1Z,
 	void* _this, Player* pPlayer, void* req) {
 	if (player_isoline[pPlayer]) {
@@ -2164,12 +2163,12 @@ THook(bool, MSSYM_B2QUE21playerChangeDimensionB1AA5LevelB2AAA4AEAAB1UE11NPEAVPla
 			playerSetB[uid] = "0";
 
 			TextType tp{ RAW };
-			sendText(uid, u8"¡ìcÇĞ»»Î¬¶È½«¹Ø±ÕÁìµØÑ¡ÔñÄ£Ê½", tp);
+			sendText(uid, u8"Â§cåˆ‡æ¢ç»´åº¦å°†å…³é—­é¢†åœ°é€‰æ‹©æ¨¡å¼", tp);
 		}
 	}
 	return original(_this, pPlayer, req);
 }
-// Íæ¼ÒÀë¿ªÓÎÏ·
+// ç©å®¶ç¦»å¼€æ¸¸æˆ
 THook(void, MSSYM_B2QUE12onPlayerLeftB1AE20ServerNetworkHandlerB2AAE21AEAAXPEAVServerPlayerB3AAUA1NB1AA1Z,
 	VA _this, Player* pPlayer, char v3) {
 	auto playername = pPlayer->getNameTag();
@@ -2192,7 +2191,7 @@ THook(void, MSSYM_B2QUE12onPlayerLeftB1AE20ServerNetworkHandlerB2AAE21AEAAXPEAVS
 
 	original(_this, pPlayer, v3);
 }
-// Íæ¼Ò¼ÓÈë
+// ç©å®¶åŠ å…¥
 THook(void, MSSYM_B1QE14onPlayerJoinedB1AE16ServerScoreboardB2AAE15UEAAXAEBVPlayerB3AAAA1Z, VA* class_this, Player* player) {
 	std::string playername = player->getNameTag();
 
@@ -2206,16 +2205,16 @@ THook(void, MSSYM_B1QE14onPlayerJoinedB1AE16ServerScoreboardB2AAE15UEAAXAEBVPlay
 	playerSetB[uid] = "0";
 
 	onlinePlayers[uid] = player;
-	cout << u8"[ÁìµØ²å¼ş]Íæ¼Ò " << playername << u8" ¼ÓÈëÓÎÏ·,Xuid:" << uid << endl;
+	cout << u8"[é¢†åœ°æ’ä»¶]ç©å®¶ " << playername << u8" åŠ å…¥æ¸¸æˆ,Xuid:" << uid << endl;
 	original(class_this, player);
 }
-// ÃüÁî×¢²á
+// å‘½ä»¤æ³¨å†Œ
 THook(void, MSSYM_B1QA5setupB1AE20ChangeSettingCommandB2AAE22SAXAEAVCommandRegistryB3AAAA1Z, CommandRegistry* _this) {
-	_this->registerCommand("land", u8"ÕÙ»½ÁìµØ²Ëµ¥", 0, { 0 }, { 0x40 });
-	_this->registerCommand("landsell", u8"³öÊÛ½ÅÏÂÁìµØ", 0, { 0 }, { 0x40 });
-	_this->registerCommand("landopen", u8"´ò¿ªÁìµØÑ¡ÔñÄ£Ê½", 0, { 0 }, { 0x40 });
-	_this->registerCommand("landoff", u8"¹Ø±ÕÁìµØÑ¡ÔñÄ£Ê½", 0, { 0 }, { 0x40 });
-	_this->registerCommand("landreload", u8"ÖØĞÂÔØÈëÁìµØÅäÖÃÎÄ¼ş", 0, { 0 }, { 0x40 });
+	_this->registerCommand("land", u8"å¬å”¤é¢†åœ°èœå•", 0, { 0 }, { 0x40 });
+	_this->registerCommand("landsell", u8"å‡ºå”®è„šä¸‹é¢†åœ°", 0, { 0 }, { 0x40 });
+	_this->registerCommand("landopen", u8"æ‰“å¼€é¢†åœ°é€‰æ‹©æ¨¡å¼", 0, { 0 }, { 0x40 });
+	_this->registerCommand("landoff", u8"å…³é—­é¢†åœ°é€‰æ‹©æ¨¡å¼", 0, { 0 }, { 0x40 });
+	_this->registerCommand("landreload", u8"é‡æ–°è½½å…¥é¢†åœ°é…ç½®æ–‡ä»¶", 0, { 0 }, { 0x40 });
 	original(_this);
 }
 
